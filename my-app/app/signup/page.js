@@ -20,13 +20,12 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
-      const res = await signupUser(data);
+      await signupUser(data);
       setSuccess('Account created successfully! Redirecting to login...');
       setTimeout(() => {
         router.push('/login');
-      }, 2000);
+      }, 1500);
     } catch (err) {
-      // Backend validation error ya hook error show karo
       const errorMsg =
         err.response?.data?.message || err.response?.data || 'Failed to create account';
       setError(typeof errorMsg === 'object' ? JSON.stringify(errorMsg) : errorMsg);
@@ -36,9 +35,10 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen p-4">
+    <div className="flex justify-center items-center min-h-screen p-4 bg-gray-100">
       <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6 text-center text-indigo-600">Create Account</h1>
+        <h1 className="text-2xl font-bold mb-2 text-center text-indigo-600">Create Account</h1>
+        <p className="text-sm text-gray-500 text-center mb-6">Join the platform</p>
 
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm whitespace-pre-wrap">
@@ -54,17 +54,17 @@ export default function SignupPage() {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium">Username (Min 3 chars)</label>
+            <label className="block text-sm font-medium text-gray-700">Username</label>
             <input
               {...register('username', { required: true })}
               type="text"
-              placeholder="e.g. ali123"
+              placeholder="e.g. mubashar"
               className="w-full p-2 border rounded mt-1 outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium">Password (Min 6 chars)</label>
+            <label className="block text-sm font-medium text-gray-700">Password</label>
             <input
               {...register('password', { required: true })}
               type="password"
@@ -74,41 +74,22 @@ export default function SignupPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium">Age (Min 18)</label>
-            <input
-              {...register('age', { required: true })}
-              type="number"
-              placeholder="e.g. 22"
-              className="w-full p-2 border rounded mt-1 outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium">City</label>
-            <input
-              {...register('city', { required: true })}
-              type="text"
-              placeholder="e.g. lahore (Auto uppercase test)"
-              className="w-full p-2 border rounded mt-1 outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium">Role</label>
+            <label className="block text-sm font-medium text-gray-700">Account Role</label>
             <select
-              {...register('role', { required: true })}
-              className="w-full p-2 border rounded mt-1 outline-none focus:ring-2 focus:ring-indigo-500"
+              {...register('role')}
+              defaultValue="user"
+              className="w-full p-2 border rounded mt-1 outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
             >
-              <option value="user">User</option>
+              <option value="user">Normal User</option>
               <option value="manager">Manager</option>
-              <option value="admin">Admin</option>
+              <option value="editor">Editor</option>
             </select>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-indigo-600 text-white p-2 rounded hover:bg-indigo-700 transition font-medium"
+            className="w-full bg-indigo-600 text-white p-2.5 rounded-lg hover:bg-indigo-700 transition font-medium disabled:bg-gray-400"
           >
             {loading ? 'Creating...' : 'Sign Up'}
           </button>

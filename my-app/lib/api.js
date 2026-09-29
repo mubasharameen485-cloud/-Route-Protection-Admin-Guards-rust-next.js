@@ -8,7 +8,7 @@ const API = axios.create({
   },
 });
 
-// Request Interceptor: Agar token hai toh header mein laga do
+// Interceptor: Token ko har request ke sath attach karo
 API.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
     const token = localStorage.getItem('don_token');
@@ -19,16 +19,14 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-// 1. Signup API
+// 1. Signup API (THE FIX: is_suspended add kar diya!)
 export const signupUser = async (data) => {
-  // Id 0 bhejna zaroori hai kyunke backend strict struct expect karta hai
   const payload = {
     id: 0,
     username: data.username,
     password: data.password,
-    age: parseInt(data.age),
-    city: data.city,
-    role: data.role,
+    role: data.role || 'user',
+    is_suspended: false, // <-- YEH MISSING THA! Naya user hamesha active hoga
   };
   const response = await API.post('/auth/signup', payload);
   return response.data;
@@ -41,6 +39,18 @@ export const loginUserApi = async (data) => {
     password: data.password,
   };
   const response = await API.post('/auth/login', payload);
+  return response.data;
+};
+
+// 3. Admin: Get All Users
+export const getAdminUsers = async () => {
+  const response = await API.get('/admin/users');
+  return response.data;
+};
+
+// 4. Admin: Suspend User by ID
+export const suspendUserApi = async (id) => {
+  const response = await API.put(`/admin/suspend/${id}`);
   return response.data;
 };
 
