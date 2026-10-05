@@ -15,5 +15,5 @@ validator = { version = "0.18", features = ["derive"] }
 
 
 # The Don Framework
-don_core = "0.2.9"
-don_macros = "0.2.9"
+don_core = "0.3.0"
+don_macros = "0.3.0"
