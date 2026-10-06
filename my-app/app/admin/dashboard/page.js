@@ -1,4 +1,4 @@
-// src/app/admin/dashboard/page.js
+// src/app/admin/dashboard/page.jsx
 'use client';
 
 import { useAuth } from '@/context/AuthContext';
@@ -16,7 +16,6 @@ export default function AdminDashboardPage() {
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
 
-  // 1. Guard check: Only 'admin' allowed
   useEffect(() => {
     if (!loading) {
       if (!user || user.role !== 'admin') {
@@ -27,7 +26,6 @@ export default function AdminDashboardPage() {
     }
   }, [user, loading, router]);
 
-  // 2. Fetch users from Rust backend
   const loadUsers = async () => {
     try {
       setFetching(true);
@@ -40,21 +38,22 @@ export default function AdminDashboardPage() {
     }
   };
 
-  // 3. Suspend user action
-  const handleSuspend = async (userId) => {
+  // THE FIX: Toggle Handler
+  const handleToggleSuspend = async (userId) => {
     try {
       setActionLoading(userId);
       setMessage(null);
       setError(null);
+      
       const res = await suspendUserApi(userId);
       setMessage(res.message);
 
-      // Local state update: status toggle kar do bina reload ke
+      
       setUsersList((prev) =>
-        prev.map((u) => (u.id === userId ? { ...u, is_suspended: true } : u))
+        prev.map((u) => (u.id === userId ? { ...u, is_suspended: res.is_suspended } : u))
       );
     } catch (err) {
-      setError(err.response?.data || 'Failed to suspend user');
+      setError(err.response?.data || 'Failed to update user status');
     } finally {
       setActionLoading(null);
     }
@@ -143,20 +142,21 @@ export default function AdminDashboardPage() {
                         </span>
                       )}
                     </td>
+                    {/* THE FIX: Dynamic Toggle Button */}
                     <td className="p-4 text-right">
                       <button
-                        onClick={() => handleSuspend(item.id)}
-                        disabled={item.is_suspended || actionLoading === item.id}
+                        onClick={() => handleToggleSuspend(item.id)}
+                        disabled={actionLoading === item.id}
                         className={`px-3 py-1.5 rounded text-xs font-semibold transition ${
                           item.is_suspended
-                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                            ? 'bg-green-600 hover:bg-green-700 text-white'
                             : 'bg-red-500 hover:bg-red-600 text-white'
                         }`}
                       >
                         {actionLoading === item.id
                           ? 'Updating...'
                           : item.is_suspended
-                          ? 'Suspended'
+                          ? 'Activate User'
                           : 'Suspend User'}
                       </button>
                     </td>
