@@ -19,9 +19,7 @@ pub struct User {
 
 impl DonAuthHooks for User {}
 
-// ==========================================
-// ADMIN HANDLERS
-// ==========================================
+
 
 // A. Get All Users
 async fn get_all_users(
